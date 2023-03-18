@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Client</title>
+    <style>
+        #chat-box {
+            width: 100%;
+            height: 80vh;
+            overflow-y: scroll;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-box"></div>
+    <input type="text" id="message-input" placeholder="Type your message">
+    <button id="send-button">Send</button>
+
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+
+        const ws = new WebSocket('wss://steadfast-sulfuric-ground.glitch.me/ws');
+
+        ws.onmessage = (event) => {
+            const message = document.createElement('p');
+            message.textContent = event.data;
+            chatBox.appendChild(message);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        };
+
+        sendButton.onclick = () => {
+            const message = messageInput.value.trim();
+            if (message) {
+                ws.send(message);
+                messageInput.value = '';
+            }
+        };
+
+        messageInput.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                sendButton.click();
+            }
+        });
+    </script>
+</body>
+</html>
